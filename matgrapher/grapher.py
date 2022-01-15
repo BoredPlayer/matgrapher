@@ -2,7 +2,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import warnings
 
-class grapher():
+class grapher(object):
     """
     A simple class covering typical use of generating graphs.
     Exmple of usage:
