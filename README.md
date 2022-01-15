@@ -25,7 +25,7 @@ from matgrapher import grapher
 
 In order to initialise the grapher object, assign it to a variable:
 ```
-gr = grapher() # gr is just an example variable name, feel free to call it differently
+gr = grapher.grapher() # gr is just an example variable name, feel free to call it differently
 ```
 
 It is recomended, that data labels are loaded before the data itself, however it is not necessary. In order to load data to grapher's internal arrays, use `loadLabels()` method. As arguments it accepts at least one string, containing labels of data sets used in legend generation. If no labels are provided, legend will not be shown. If more sets of data are loaded than overall provided labels, a warning will be rised, however it does not affect the flow of the program. Example of usage is shown below:
@@ -63,7 +63,7 @@ If it is necessary to draw a new set of data, the data currently loaded can be r
 All of commands in recommended order:
 ```
 from grapher import grapher
-gr=grapher()
+gr = grapher.grapher()
 gr.loadLabels(label1, label2)
 gr.loadData(x_data1, y_data1, x_data2, y_data2)
 gr.generateGraph()

@@ -6,8 +6,8 @@ class grapher(object):
     """
     A simple class covering typical use of generating graphs.
     Exmple of usage:
-    0) import class by using    "from grapher import grapher"
-    1) create new object i.e.   "gr=grapher()"
+    0) import class by using    "from matgrapher import grapher"
+    1) create new object i.e.   "gr = grapher.grapher()"
     2) load labels              "gr.loadLabels(label1, label2)"
     3) load data                "gr.loadData(x_data1, y_data1, x_data2, y_data2)"
     4) generate graph           "gr.generateGraph()"
