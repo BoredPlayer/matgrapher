@@ -45,7 +45,7 @@ class grapher(object):
 
         self.labels.append(label)
         if(len(args)>0):
-            for i in range(len(self.labels)):
+            for i in range(len(args)):
                 self.labels.append(args[i])
 
     def loadData(self, x_argument, y_argument, *args):
