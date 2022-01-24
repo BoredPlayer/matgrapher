@@ -50,6 +50,7 @@ Generating the graph may be performed using `generateGraph()` method. Providing 
 9) grid (boolean) - argument for generating grid in the drawn graph
 10) save (boolean) - flag for saving drawn graph
 11) show (boolean) - flag for showing drawn graph
+12) log_scale (string) - set axis with log scale (avaliable options: "x", "y", "xy")
 
 After drawing the plot, figure created will be closed as per matplotlib documentation's recomendation.
 

@@ -65,7 +65,7 @@ class grapher(object):
                 self.x_table.append(args[2*i])
                 self.y_table.append(args[2*i+1])
 
-    def generateGraph(self, data_x=x_table, data_y=y_table, axis_names=["X Values", "Y Values"], graph_title="Graph", legend=labels, filename="output/file.png", dpi=300, plot_size = [15*1.5/2.54, 15*1.5/2.54], grid = True, save=True, show=False):
+    def generateGraph(self, data_x=x_table, data_y=y_table, axis_names=["X Values", "Y Values"], graph_title="Graph", legend=labels, filename="output/file.png", dpi=300, plot_size = [15*1.5/2.54, 15*1.5/2.54], grid = True, save=True, show=False, log_scale = 'none'):
         '''
         Draw a graph based on provided data.
         Arguments:
@@ -102,6 +102,13 @@ class grapher(object):
         plt.ylabel(axis_names[1])
         plt.title(graph_title)
         plt.grid(grid)
+        if(log_scale=='y'):
+            plt.yscale('log')
+        if(log_scale=='x'):
+            plt.xscale('log')
+        if(log_scale=='xy'):
+            plt.yscale('log')
+            plt.xscale('log')
         if(save):
             plt.savefig(filename)
         if(show):
