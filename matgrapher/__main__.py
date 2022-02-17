@@ -4,18 +4,21 @@ import socket
 from matgrapher import grapher
 
 gr = None
+less_info = True
 
 def loaddata(data, dt_buffer, hold=True):
     global gr
     global index
     if(b'index' in data):
         index = int(data[-1])-48# 48 wynika z indeksu liczby 0 w tabeli ASCII
-        print(index)
+        if(not less_info):
+            print(index)
     else:
         if(hold == True):
             dt_buffer[index].append(float(data))
         else:
-            print(dt_buffer)
+            if(not less_info):
+                print(dt_buffer)
             gr.loadData(dt_buffer[0], dt_buffer[1])
             dt_buffer[0].clear()
             dt_buffer[1].clear()
@@ -27,13 +30,15 @@ def loadlabels(data, lb_buffer, hold=True):
     if(hold == True):
         lb_buffer.append(str(data))
     else:
-        print(lb_buffer)
+        if(not less_info):
+            print(lb_buffer)
         gr.loadLabels(lb_buffer)
         lb_buffer.clear()
     return lb_buffer
 
 def main():
     global gr
+    global less_info
     gr = grapher.grapher()
     index = 0
 
@@ -77,6 +82,10 @@ def main():
         if(setlogscale_flag == True):
             gr.setLogsaceMethod(str(data))
             setlogscale_flag = False
+        if(data==b'echo off'):
+            less_info = True
+        if(data==b'echo on'):
+            less_info = False
         if(data==b'load data'):
             loaddata_flag = True
         if(data==b'end load data'):
@@ -104,7 +113,8 @@ def main():
         if(data==b'end listening'):
             gr.destroyGraphTable()
             break
-        print("Message: "+str(data))
+        if(not less_info):
+            print("Message: "+str(data))
         if(loaddata_flag == True and data!=b'load data'):
             dt_buffer = loaddata(data, dt_buffer)
         if(loadlabels_flag == True and data!=b'load labels'):
