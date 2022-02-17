@@ -33,7 +33,7 @@ def loadlabels(data, lb_buffer, hold=True):
         if(not less_info):
             print(lb_buffer)
         for i in range(len(lb_buffer)):
-            gr.loadLabels(lb_buffer[i])
+            gr.loadLabels(str(lb_buffer[i]))
         lb_buffer.clear()
     return lb_buffer
 
