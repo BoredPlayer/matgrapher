@@ -3,5 +3,5 @@ matgrapher is a library intended to provide functions limiting steps necessary t
 """
 
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "BoredPlayer"

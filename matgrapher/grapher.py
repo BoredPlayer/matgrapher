@@ -17,6 +17,15 @@ class grapher(object):
     x_table = []
     y_table = []
     labels = []
+    graphTitle = "Graph"
+    axisNames = ["X Values", "Y Values"]
+    outputFilename = "output/file.png"
+    dpi = 300
+    plotSize = [15*1.5/2.54, 15*1.5/2.54]
+    showGrid = True
+    saveFile = True
+    showFigure = False
+    logscale = 'none'
 
     def __init__(self):
         pass
@@ -58,14 +67,48 @@ class grapher(object):
         if(len(args)%2!=0):
             warnings.warn(f"Expected equal ammount of x and y data sets. Got ({int((len(args)+1)/2)}) and ({int((len(args)-1)/2)}).")
 
-        self.x_table.append(x_argument)
-        self.y_table.append(y_argument)
+        self.x_table.append(x_argument.copy())
+        self.y_table.append(y_argument.copy())
         if(len(args)>0):
             for i in range(int(len(args)/2)):
                 self.x_table.append(args[2*i])
                 self.y_table.append(args[2*i+1])
+    
+    def setAxisNames(self, X_axis, Y_axis):
+        self.axisNames = [X_axis, Y_axis]
+        
+    def setGraphTitle(self, graph_title):
+        self.graphTitle = graph_title
+    
+    def setFilename(self, filename):
+        self.outputFilename = filename
+        
+    def setExportMethod(self, method):
+        '''
+        Sets method of exporting file.
+        0 - save, don't show
+        1 - don't save, show
+        2 - save and show
+        '''
+        if(method!=0 and method!=1 and method!=2):
+            warnings.warn(f"Warning: wrong export method provided: {method}. Falling back to method 1 (don't save, show)")
+        if(method==0):
+            self.saveFile = True
+            self.showFigure = False
+        if(method==1):
+            self.saveFile = False
+            self.showFigure = True
+        if(method==2):
+            self.saveFile = True
+            self.showFigure = True
+    
+    def setGridVisibility(self, grid_visible):
+        self.showGrid = grid_visible
+    
+    def setLogscaleMethod(self, logscale_method):
+        self.logscale = logscale_method
 
-    def generateGraph(self, data_x=x_table, data_y=y_table, axis_names=["X Values", "Y Values"], graph_title="Graph", legend=labels, filename="output/file.png", dpi=300, plot_size = [15*1.5/2.54, 15*1.5/2.54], grid = True, save=True, show=False, tight_layout=True, log_scale = 'none'):
+    def generateGraph(self, data_x=x_table, data_y=y_table, axis_names=axisNames, graph_title=graphTitle, legend=labels, filename=outputFilename, dpi=dpi, plot_size = plotSize , grid = showGrid, save=saveFile, show=showFigure, tight_layout=True, log_scale = logscale):
         '''
         Draw a graph based on provided data.
         Arguments:
