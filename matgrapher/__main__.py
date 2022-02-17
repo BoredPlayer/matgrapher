@@ -55,6 +55,8 @@ def main():
     setgridvisibility_flag = False
     setlogscale_flag = False
 
+    print(f"Waiting for connection @ {UDP_IP_ADDRESS}:{UDP_PORT_NO}\n")
+
     while(True):
         data, addr = serverSock.recvfrom(1024)
         if(settitle_flag == True):
