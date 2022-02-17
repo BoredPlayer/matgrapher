@@ -93,6 +93,11 @@ while(True):
         settitle_flag = True
     if(data==b'set logscalemethod'):
         settitle_flag = True
+    if(data==b'destroy graph'):
+        gr.destroyGraphTable()
+    if(data==b'end listening'):
+        gr.destroyGraphTable()
+        break
     print("Message: "+str(data))
     if(loaddata_flag == True and data!=b'load data'):
         dt_buffer = loaddata(data, dt_buffer)
