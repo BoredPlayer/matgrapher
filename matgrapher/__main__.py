@@ -96,7 +96,7 @@ def main():
             loadlabels_flag = True
         if(data==b'end load labels'):
             loadlabels_flag = False
-            loadlabels(b'0', dt_buffer, hold=False)
+            loadlabels(b'0', lb_buffer, hold=False)
         if(data==b'generate graph'):
             gr.generateGraph(show=True, save=False)
         if(data==b'set title'):
@@ -111,6 +111,8 @@ def main():
             settitle_flag = True
         if(data==b'destroy graph'):
             gr.destroyGraphTable()
+            dt_buffer = [[], []]
+            lb_buffer = []
         if(data==b'end listening'):
             gr.destroyGraphTable()
             break
