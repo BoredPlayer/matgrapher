@@ -28,7 +28,7 @@ def loadlabels(data, lb_buffer, hold=True):
     global gr
     global index
     if(hold == True):
-        lb_buffer.append(str(data))
+        lb_buffer.append(str(data.decode()))
     else:
         if(not less_info):
             print(lb_buffer)
