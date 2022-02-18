@@ -24,6 +24,21 @@ def loaddata(data, dt_buffer, hold=True):
             dt_buffer[1].clear()
     return dt_buffer
 
+def loaddataargs(data, dt_buffer, hold=True):
+    global gr
+    ln = data.decode().split(",")
+    if(hold == True):
+        dt_buffer[0].append(float(ln[0]))
+        dt_buffer[1].append(float(ln[1]))
+        #print(dt_buffer[0][-1])
+    else:
+        if(not less_info):
+            print(dt_buffer)
+        gr.loadData(dt_buffer[0], dt_buffer[1])
+        dt_buffer[0].clear()
+        dt_buffer[1].clear()
+    return dt_buffer
+
 def loadlabels(data, lb_buffer, hold=True):
     global gr
     global index
@@ -54,6 +69,7 @@ def main():
     lb_buffer = []
 
     loaddata_flag = False
+    loaddataargs_flag = False
     loadlabels_flag = False
     settitle_flag = False
     setaxisnames_flag = False
@@ -89,9 +105,14 @@ def main():
             less_info = False
         if(data==b'load data'):
             loaddata_flag = True
+        if(data==b'load dataargs'):
+            loaddataargs_flag = True
         if(data==b'end load data'):
             loaddata_flag = False
             loaddata(b'0', dt_buffer, hold=False)
+        if(data==b'end load dataargs'):
+            loaddataargs_flag = False
+            loaddataargs(b'0,0', dt_buffer, hold=False)
         if(data==b'load labels'):
             loadlabels_flag = True
         if(data==b'end load labels'):
@@ -120,6 +141,8 @@ def main():
             print("Message: "+str(data))
         if(loaddata_flag == True and data!=b'load data'):
             dt_buffer = loaddata(data, dt_buffer)
+        if(loaddataargs_flag == True and data!=b'load dataargs'):
+            dt_buffer = loaddataargs(data, dt_buffer)
         if(loadlabels_flag == True and data!=b'load labels'):
             lb_buffer = loadlabels(data, lb_buffer)
     return None
