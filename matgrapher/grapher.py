@@ -17,6 +17,8 @@ class grapher(object):
     x_table = []
     y_table = []
     labels = []
+    xlim = []
+    ylim = []
     graphTitle = "Graph"
     axisNames = ["X Values", "Y Values"]
     outputFilename = "output/file.png"
@@ -108,13 +110,15 @@ class grapher(object):
     def setLogscaleMethod(self, logscale_method):
         self.logscale = logscale_method
 
-    def generateGraph(self, data_x=x_table, data_y=y_table, axis_names=axisNames, graph_title=graphTitle, legend=labels, filename=outputFilename, dpi=dpi, plot_size = plotSize , grid = showGrid, save=saveFile, show=showFigure, tight_layout=True, log_scale = logscale):
+    def generateGraph(self, data_x=x_table, data_y=y_table, axis_names=axisNames, x_lim = xlim, y_lim = ylim, graph_title=graphTitle, legend=labels, filename=outputFilename, dpi=dpi, plot_size = plotSize , grid = showGrid, save=saveFile, show=showFigure, tight_layout=True, log_scale = logscale):
         '''
         Draw a graph based on provided data.
         Arguments:
         -> data_x ([float, ...]) - data shown as argument X of the drawn chart,
         -> data_y ([float, ...]) - data shown as argument Y of the drawn chart,
         -> axis_names ([string, string]) - table of axis names ([0] - X axis, [1] - Y axis]),
+        -> x_lim ([float, float]) - limits of x_axis (if an empty array is passed (default), no limits are imposed)
+        -> y_lim ([float, float]) - limits of y_axis (if an empty array is passed (default), no limits are imposed)
         -> graph_title (string) - a title for drawn graph,
         -> legend ([string, ...]) - tabe of labels used in legend,
         -> filename (string) - name for the output file,
@@ -145,6 +149,10 @@ class grapher(object):
         plt.ylabel(axis_names[1])
         plt.title(graph_title)
         plt.grid(grid)
+        if(len(x_lim)==2):
+            plt.xlim(x_lim[0], x_lim[1])
+        if(len(y_lim)==2):
+            plt.ylim(y_lim[0], y_lim[1])
         if(log_scale=='y'):
             plt.yscale('log')
         if(log_scale=='x'):

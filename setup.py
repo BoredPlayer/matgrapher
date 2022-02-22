@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='matgrapher',
-    version = '0.1.1',
+    version = '0.1.1a',
     description = 'An easy to use python class aiding with matplotlib graph making.',
     url = 'https://github.com/BoredPlayer/matgrapher',
     author = 'BoredPlayer',
