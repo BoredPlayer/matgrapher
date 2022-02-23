@@ -32,12 +32,38 @@ def loaddataargs(data, dt_buffer, hold=True):
         dt_buffer[1].append(float(ln[1]))
         #print(dt_buffer[0][-1])
     else:
-        if(not less_info):
-            print(dt_buffer)
+        #if(not less_info):
+            #print(dt_buffer)
         gr.loadData(dt_buffer[0], dt_buffer[1])
         dt_buffer[0].clear()
         dt_buffer[1].clear()
     return dt_buffer
+
+def loadmuldata(data, array, hold=True):
+    '''
+    Loads multiple columns of data simulatniously. If held, it will append provided array with new lines of data. Please provide data arguments and values in pairs according to grapher.loadData() documentation:
+    [[arguments (float)], [values(float)], ...]
+    Arguments:
+    -> data (string) - byte string of data provided via communication protocol,
+    -> array (float*, ...) - array of floats, provided to matgrapher's internal arrays of data,
+    -> hold (boolean) - flag providing information if new data is expected. If true, it will append privided array with arguments and values read from data string.
+    Returns:
+    -> array (float*, ...) - provided array, expanded with provided data.
+    '''
+    global gr
+    if(hold==True):
+        ln = data.decode().split(",")
+        if(len(array)<len(ln)):
+            for i in range(len(ln)-len(array)):
+                array.append([])
+        for i in range(len(ln)):
+            array[i].append(float(ln[i]))
+    else:
+        for i in range(int(len(array)/2)):
+            gr.loadData(array[2*i], array[2*i+1])
+            array[2*i].clear()
+            array[2*i+1].clear()
+    return array
 
 def loadlabels(data, lb_buffer, hold=True):
     global gr
@@ -70,6 +96,7 @@ def main():
 
     loaddata_flag = False
     loaddataargs_flag = False
+    loadmuldata_flag = False
     loadlabels_flag = False
     settitle_flag = False
     setaxisnames_flag = False
@@ -107,12 +134,17 @@ def main():
             loaddata_flag = True
         if(data==b'load dataargs'):
             loaddataargs_flag = True
+        if(data==b'load muldata'):
+            loadmuldata_flag = True
         if(data==b'end load data'):
             loaddata_flag = False
             loaddata(b'0', dt_buffer, hold=False)
         if(data==b'end load dataargs'):
             loaddataargs_flag = False
             loaddataargs(b'0,0', dt_buffer, hold=False)
+        if(data==b'end load muldata'):
+            loadmuldata_flag = False
+            loadmuldata(b'0,0', dt_buffer, hold=False)
         if(data==b'load labels'):
             loadlabels_flag = True
         if(data==b'end load labels'):
@@ -143,6 +175,8 @@ def main():
             dt_buffer = loaddata(data, dt_buffer)
         if(loaddataargs_flag == True and data!=b'load dataargs'):
             dt_buffer = loaddataargs(data, dt_buffer)
+        if(loadmuldata_flag == True and data!=b'load muldata'):
+            dt_buffer = loadmuldata(data, dt_buffer)
         if(loadlabels_flag == True and data!=b'load labels'):
             lb_buffer = loadlabels(data, lb_buffer)
     return None
