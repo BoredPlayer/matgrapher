@@ -1,7 +1,7 @@
 #__main__.py
 
 import socket
-import grapher
+from matgrapher import grapher
 
 gr = None
 less_info = True

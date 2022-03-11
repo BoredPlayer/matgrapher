@@ -44,8 +44,8 @@ class grapher(object):
             del self.y_table[0]
         for i in range(len(self.labels)):
             del self.labels[0]
-        for i in range(len(self.linestyles)):
-            del self.linestyles[0]
+        for i in range(len(self.linestyle)):
+            del self.linestyle[0]
         for i in range(len(self.colors)):
             del self.colors[0]
         return None
