@@ -84,7 +84,7 @@ class grapher(object):
     
     def loadLineStyles(self, linestyle, *args):
         self.linestyle.append(linestyle)
-        if(len(args>0)):
+        if(len(args)>0):
             for i in range(len(args)):
                 self.linestyle.append(args[i])
     
