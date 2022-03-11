@@ -210,9 +210,9 @@ class grapher(object):
             plt.xscale('log')
         if(save):
             if(tight_layout):
-                plt.savefig(filename, bbox_inches='tight')
+                plt.savefig(filename, bbox_inches='tight', dpi=dpi)
             else:
-                plt.savefig(filename)
+                plt.savefig(filename, dpi=dpi)
         if(show):
             plt.show()
         plt.close()
