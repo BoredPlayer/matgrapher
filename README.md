@@ -162,4 +162,60 @@ In order to further accelerate data transfer bewteen the original program and th
 ```
 where `argument` is x-axis value, `value` is y-axis value, `n` is the ammount of available data and `a` and `b` are available data sets.
 
-An example of C++ implementation, as well as C++ library will be provided in future updates.
+## Example of C++ implementation
+In order to use the matgrapher library with software written in other languages, a UDP socket must be created. The library provides a C++ 11 compatible implementation of of python-C++ interface.
+
+An example code is shown below. This program downloads two sets of data from `file1.txt` and `file2.csv`, runs the built-in python matgrapher gate, sends the downloaded sets to the server and generates a graph. 
+
+```C++
+#include <vector>
+#include <chrono>
+#include <thread>
+#include <string>
+
+#include "matgraphergate.h"
+
+#define SERVER "127.0.0.1" // server address (doesn't have to be local)
+#define PORT 50553 // server port number
+#define MAXLINE 1024 // max length of packet buffer
+
+int main(){
+  std::vector<std::vector<double>> fcontents0, fcontents1; // vectors of read file contents
+  matgraphergate gr(PORT, SERVER, MAXLINE);// initialise the gate
+  
+  //loading files
+  //arguments for readFile function:
+  //-> file to path
+  //-> vector to which the data should be saved
+  //-> number of ending line (no boundary set if set to 0)
+  
+  gr.readFile("input/file1.txt", fcontents0, 0);
+  gr.split_char = ',';// if a loaded file has a separator different than ' ', than split_char variable must be changed to an appropriate character
+  gr.readFile("input/file2.csv", fcontents1, 0);
+  
+  //automatically running the server
+  system("start python -m matgrapher");
+  std::this_thread::sleep_for(std::chrono::seconds(2));// unfortunatelly, it takes some time before the server is initialised.
+  //preparing internal variables
+  gr.sendCommand("echo on");// show debugging messages. Invoke "echo off" to disable.
+  std::vector<std::string> labels = {"file 1", "file 2"};// labels used in graph.
+  gr.loadLabels(labels, (int)labels.size());// load the labels/
+  gr.setExportMethod(1);// show, don't save
+  gr.setAxisNames("time [s]", "pressure [Pa]");// set x-axis and y-axis names
+  gr.setTitle("Comparison of pressures in time");// set title
+  gr.sendCommand("echo off");// disable debugging messages to hide loaded data
+  
+  //sending data
+  std::vector<std::vector<double>> combined_arguments = {fcontents0.at(1), fcontents1.at(1)};//load arguments from column 1 of file1 and file2
+  std::vector<std::vector<double>> combined_data = {fcontents0.at(5), fcontents1.at(3)};//load values from column 5 of file1 and from column 3 of file2
+  gr.loadMulData(combined_arguments, combined_data);//load data quickly
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));// wait for half a second, just to ensure no data gets lost
+  
+  //creating the graph and cleaning up
+  gr.sendCommand("generate graph");// build graph and show it
+  gr.sendCommand("destroy graph");// clear internal tables
+  gr.sendCommand("end listening");// shut down the server
+  
+  return 0;
+}
+```
