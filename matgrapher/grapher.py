@@ -19,7 +19,7 @@ class grapher(object):
     labels = []
     xlim = []
     ylim = []
-    linestyles = []
+    linestyle = []
     colors = []
     graphTitle = "Graph"
     axisNames = ["X Values", "Y Values"]
@@ -136,7 +136,7 @@ class grapher(object):
     def setLogscaleMethod(self, logscale_method):
         self.logscale = logscale_method
 
-    def generateGraph(self, data_x=x_table, data_y=y_table, axis_names=axisNames, x_lim = xlim, y_lim = ylim, graph_title=graphTitle, line_styles=linestyles, colors = colors, legend=labels, legend_args = '', filename=outputFilename, dpi=dpi, plot_size = plotSize , grid = showGrid, save=saveFile, show=showFigure, tight_layout=True, log_scale = logscale):
+    def generateGraph(self, data_x=x_table, data_y=y_table, axis_names=axisNames, x_lim = xlim, y_lim = ylim, graph_title=graphTitle, line_styles=linestyle, colors = colors, legend=labels, legend_args = '', filename=outputFilename, dpi=dpi, plot_size = plotSize , grid = showGrid, save=saveFile, show=showFigure, tight_layout=True, log_scale = logscale):
         '''
         Draw a graph based on provided data.
         Arguments:
