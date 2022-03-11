@@ -19,6 +19,8 @@ class grapher(object):
     labels = []
     xlim = []
     ylim = []
+    linestyles = []
+    colors = []
     graphTitle = "Graph"
     axisNames = ["X Values", "Y Values"]
     outputFilename = "output/file.png"
@@ -42,6 +44,10 @@ class grapher(object):
             del self.y_table[0]
         for i in range(len(self.labels)):
             del self.labels[0]
+        for i in range(len(self.linestyles)):
+            del self.linestyles[0]
+        for i in range(len(self.colors)):
+            del self.colors[0]
         return None
 
     def loadLabels(self, label, *args):
@@ -75,6 +81,26 @@ class grapher(object):
             for i in range(int(len(args)/2)):
                 self.x_table.append(args[2*i])
                 self.y_table.append(args[2*i+1])
+    
+    def loadLineStyles(self, linestyle, *args):
+        self.linestyle.append(linestyle)
+        if(len(args>0)):
+            for i in range(len(args)):
+                self.linestyle.append(args[i])
+    
+    def changeLineStyle(self, index, newlinestyle, linestyle = '-'):
+        if(index == 'u'):
+            if(linestyle in self.linestyle):
+                for i in range(len(self.linestyle)):
+                    if(self.linestyle==linestyle):
+                        self.linestyle = newlinestyle
+        self.linestyle[index] = newlinestyle
+    
+    def loadColor(self, color, *args):
+        self.colors.append(color)
+        if(len(args)>0):
+            for cl in args:
+                self.colors.append(cl)
     
     def setAxisNames(self, X_axis, Y_axis):
         self.axisNames = [X_axis, Y_axis]
@@ -110,7 +136,7 @@ class grapher(object):
     def setLogscaleMethod(self, logscale_method):
         self.logscale = logscale_method
 
-    def generateGraph(self, data_x=x_table, data_y=y_table, axis_names=axisNames, x_lim = xlim, y_lim = ylim, graph_title=graphTitle, legend=labels, filename=outputFilename, dpi=dpi, plot_size = plotSize , grid = showGrid, save=saveFile, show=showFigure, tight_layout=True, log_scale = logscale):
+    def generateGraph(self, data_x=x_table, data_y=y_table, axis_names=axisNames, x_lim = xlim, y_lim = ylim, graph_title=graphTitle, line_styles=linestyles, colors = colors, legend=labels, legend_args = '', filename=outputFilename, dpi=dpi, plot_size = plotSize , grid = showGrid, save=saveFile, show=showFigure, tight_layout=True, log_scale = logscale):
         '''
         Draw a graph based on provided data.
         Arguments:
@@ -121,6 +147,7 @@ class grapher(object):
         -> y_lim ([float, float]) - limits of y_axis (if an empty array is passed (default), no limits are imposed)
         -> graph_title (string) - a title for drawn graph,
         -> legend ([string, ...]) - tabe of labels used in legend,
+        -> legend_args (string) - arguments for plt.legend function
         -> filename (string) - name for the output file,
         -> dpi (int) - Dots Per Inch (resolution) of the exported graph,
         -> plot_size ([float, float]) - size of the exported graph (in inches - conversion ratio cm->inch is 1/2.54),
@@ -140,11 +167,32 @@ class grapher(object):
         plt.figure(figsize = (plot_size[0], plot_size[1]))
         for data_set_index, (xd, yd) in enumerate(zip(data_x, data_y)):
             if(data_set_index>=len(legend)):
-                plt.plot(xd, yd)
+                if(data_set_index>=len(line_styles)):
+                    if(data_set_index>=len(colors)):
+                        plt.plot(xd, yd)
+                    else:
+                        plt.plot(xd, yd, colors[data_set_index])
+                else:
+                    if(data_set_index>=len(colors)):
+                        plt.plot(xd, yd, linestyle=line_styles[data_set_index])
+                    else:
+                        plt.plot(xd, yd, linestyle=line_styles[data_set_index], color=colors[data_set_index])
             else:
-                plt.plot(xd, yd, label = legend[data_set_index])
+                if(data_set_index>=len(line_styles)):
+                    if(data_set_index>=len(colors)):
+                        plt.plot(xd, yd, label = legend[data_set_index])
+                    else:
+                        plt.plot(xd, yd, label = legend[data_set_index], color=colors[data_set_index])
+                else:
+                    if(data_set_index>=len(colors)):
+                        plt.plot(xd, yd, label = legend[data_set_index], linestyle=line_styles[data_set_index])
+                    else:
+                        plt.plot(xd, yd, label = legend[data_set_index], linestyle=line_styles[data_set_index], color=colors[data_set_index])
         if(len(legend)>0):
-            plt.legend()
+            if(legend_args==''):
+                plt.legend()
+            else:
+                plt.legend(legend_args)
         plt.xlabel(axis_names[0])
         plt.ylabel(axis_names[1])
         plt.title(graph_title)

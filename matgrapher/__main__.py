@@ -1,7 +1,7 @@
 #__main__.py
 
 import socket
-from matgrapher import grapher
+import grapher
 
 gr = None
 less_info = True
@@ -104,18 +104,29 @@ def main():
     setgridvisibility_flag = False
     setlogscale_flag = False
 
+    graphTitle = gr.graphTitle
+    axisNames = gr.axisNames
+    exportmethod = 1
+    gridvisibility = gr.showGrid    
+
     print(f"Waiting for connection @ {UDP_IP_ADDRESS}:{UDP_PORT_NO}\n")
 
     while(True):
         data, addr = serverSock.recvfrom(1024)
         if(settitle_flag == True):
-            gr.setGraphTitle(str(data))
+            if(not less_info):
+                print(f"Setting graph title to: {data.decode()}")
+            gr.setGraphTitle(str(data.decode()))
+            graphTitle = data.decode()
             settitle_flag = False
         if(setaxisnames_flag == True):
+            if(not less_info):
+                print("Changing axis names.")
             gr.setAxisNames(str(data).split(',')[0], str(data).split(',')[1])
+            axisNames = data.decode().split(',')[0], str(data).split(',')[1]
             setaxisnames_flag = False
         if(setexportmethod_flag == True):
-            gr.setExportMethod(int(data)-48)
+            gr.setExportMethod(int(data))
             setexportmethod_flag = False
         if(setgridvisibility_flag == True):
             if(data==b'True' or data==b'true' or data==b'1'):
@@ -151,17 +162,17 @@ def main():
             loadlabels_flag = False
             loadlabels(b'0', lb_buffer, hold=False)
         if(data==b'generate graph'):
-            gr.generateGraph(show=True, save=False)
+            gr.generateGraph(graph_title=graphTitle, axis_names=axisNames, show=True, save=False)
         if(data==b'set title'):
             settitle_flag = True
         if(data==b'set axisnames'):
-            settitle_flag = True
+            setaxisnames_flag = True
         if(data==b'set exportmethod'):
-            settitle_flag = True
+            setexportmethod_flag = True
         if(data==b'set gridvisibility'):
-            settitle_flag = True
+            setgridvisibility_flag = True
         if(data==b'set logscalemethod'):
-            settitle_flag = True
+            setlogscale_flag = True
         if(data==b'destroy graph'):
             gr.destroyGraphTable()
             dt_buffer = [[], []]
