@@ -20,7 +20,7 @@ Both should be installed automatically while using pip.
 ## Installation
 To install the library just type in terminal:
 ```
-pip install git+https://github.com/BoredPlayer/matgrapher.git@communication
+pip install git+https://github.com/BoredPlayer/matgrapher.git
 ```
 
 ## Usage
