@@ -1,7 +1,7 @@
 # matgrapher
 An easy to use python class aiding with matplotlib graph making. It provides a set of methods automating typical usecases of matplotlib graph drawing.
 
-The _communication_ branch makes it possible to export graphs using any language supporting UDP sockets.
+Since version 0.1.3, `__main__.py` provides a UDP server functionality for graph generation. With this approach it is possible to draw matplotlib graphs with C++ software (more in chapter [Communication](#communication)). The `libraries` folder contains a C++ library as an example of implementation in language other than python.
 
 ### Table of contents:
 1) [Dependencies](#dependencies)
@@ -19,7 +19,7 @@ Both should be installed automatically while using pip.
 
 ## Installation
 To install the library just type in terminal:
-```
+```bash
 pip install git+https://github.com/BoredPlayer/matgrapher.git
 ```
 
@@ -28,22 +28,22 @@ List of all commands in recommended order (a TL;DR if You wish) is presented at 
 
 ### Basic use
 Importing the library may be done using:
-```
+```python
 from matgrapher import grapher
 ```
 
 In order to initialise the grapher object, assign it to a variable:
-```
+```python
 gr = grapher.grapher() # gr is just an example variable name, feel free to call it differently
 ```
 
 It is recomended, that data labels are loaded before the data itself, however it is not necessary. In order to load data to grapher's internal arrays, use `loadLabels()` method. As arguments it accepts at least one string, containing labels of data sets used in legend generation. If no labels are provided, legend will not be shown. If more sets of data are loaded than overall provided labels, a warning will be rised, however it does not affect the flow of the program. Example of usage is shown below:
-```
+```python
 gr.loadLabels(label1, label2, "last dataset") # label1 and label2 are strings to be shown in chart's legend
 ```
 
 For easier data visualisation, it can be stored in grapher's local arrays using `loadData()` method. As arguments the method accepts at least 2 one dimensional arrays consisting of x- and y-axis data. If needed, the function can load multiple sets of data, however it is important to provide it in pairs of x and y arrays. Example of use is shown below:
-```
+```python
 gr.loadData(x_data[0], y_data[0], x_data[1], y_data[1], x_data[2], y_data[2]) # x_data and y_data are 2-dimensional arrays containing data to be drawn
 ```
 
@@ -65,7 +65,7 @@ Generating the graph may be performed using `generateGraph()` method. Providing 
 After drawing the plot, figure created will be closed as per matplotlib documentation's recomendation.
 
 Example of use:
-```
+```python
 gr.generateGraph(axis_names=[r"time $\left [ s \right ]$", r"$C_D, C_L$"], graph_title=r"Simulated $C_L$ and $C_D$ values in time", filename="output/CLCDtime.png", grid=True)
 ```
 
@@ -73,7 +73,7 @@ gr.generateGraph(axis_names=[r"time $\left [ s \right ]$", r"$C_D, C_L$"], graph
 If it is necessary to draw a new set of data, the data currently loaded can be removed by using the `destroyGraphTable()`. The method requires no arguments and will clear all of loaded data.
 
 All of commands in recommended order:
-```
+```python
 from grapher import grapher
 gr = grapher.grapher()
 gr.loadLabels(label1, label2)
@@ -84,6 +84,16 @@ gr.destroyGraphTable()
 
 # Communication
 A big part of matgrapher library is an implementation of an interface for software not written in python. The `__main__.py` module acts as a server capable of receiving and processing data incoming via UDP packets. A socket used by the module listens for incoming messages in port 50553.
+
+To easily run the server, use bash command:
+```bash
+python -m matgrapher
+```
+After a few seconds the server will print welcome message:
+```
+Waiting for connection @ 127.0.0.1:50553
+```
+This means, that the server listens locally for connection at port 50553.
 
 ## Server commands
 The server recognises the following set of commands:
