@@ -21,6 +21,7 @@ class grapher(object):
     ylim = []
     linestyle = []
     colors = []
+    show_label = []
     graphTitle = "Graph"
     axisNames = ["X Values", "Y Values"]
     outputFilename = "output/file.png"
@@ -61,9 +62,11 @@ class grapher(object):
             warnings.warn(f"Not all data sets ({len(self.x_table)}) are labeled.")
 
         self.labels.append(label)
+        self.show_label.append(True)
         if(len(args)>0):
             for i in range(len(args)):
                 self.labels.append(args[i])
+                self.show_label.append(True)
 
     def loadData(self, x_argument, y_argument, *args):
         '''
@@ -81,6 +84,28 @@ class grapher(object):
             for i in range(int(len(args)/2)):
                 self.x_table.append(args[2*i])
                 self.y_table.append(args[2*i+1])
+                
+    def hideLabel(self, label_index=False, label=''):
+        '''
+        Hide label from graph legend.
+        Arguments:
+        -> label_index (int or bool) - index of label to be hidden. Assign 'False' if more than one label is to be hidden.
+        -> label (string) - label or labels to be hidden if share the same text.
+        '''
+        if(label!=''):
+            if(label in self.labels):
+                for i in range(len(self.labels)):
+                    if(self.labels[i]==label):
+                        self.show_label[i]=False
+            else:
+                warning.warn(f"Warning: No label {label} found!")
+        else:
+            if(label_index!=False):
+                try:
+                    self.show_label[label_index] = False
+                except:
+                    warning.warn(f"Warning: Could not hide label {label_index}. Size of label array is {len(self.show_label)}")
+            
     
     def loadLineStyles(self, linestyle, *args):
         self.linestyle.append(linestyle)
@@ -146,6 +171,8 @@ class grapher(object):
         -> x_lim ([float, float]) - limits of x_axis (if an empty array is passed (default), no limits are imposed)
         -> y_lim ([float, float]) - limits of y_axis (if an empty array is passed (default), no limits are imposed)
         -> graph_title (string) - a title for drawn graph,
+        -> line_styles ([string, ...]) - line styles as matplotlib argument
+        -> colors ([string, ...]) - line colors as matplotlib argument
         -> legend ([string, ...]) - tabe of labels used in legend,
         -> legend_args (string) - arguments for plt.legend function
         -> filename (string) - name for the output file,
@@ -166,7 +193,7 @@ class grapher(object):
     
         plt.figure(figsize = (plot_size[0], plot_size[1]))
         for data_set_index, (xd, yd) in enumerate(zip(data_x, data_y)):
-            if(data_set_index>=len(legend)):
+            if(data_set_index>=len(legend) or self.show_label[data_set_index]==False):
                 if(data_set_index>=len(line_styles)):
                     if(data_set_index>=len(colors)):
                         plt.plot(xd, yd)
