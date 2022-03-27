@@ -161,7 +161,7 @@ class grapher(object):
     def setLogscaleMethod(self, logscale_method):
         self.logscale = logscale_method
 
-    def generateGraph(self, data_x=x_table, data_y=y_table, axis_names=axisNames, x_lim = xlim, y_lim = ylim, graph_title=graphTitle, line_styles=linestyle, colors = colors, legend=labels, legend_args = '', filename=outputFilename, dpi=dpi, plot_size = plotSize , grid = showGrid, save=saveFile, show=showFigure, tight_layout=True, log_scale = logscale):
+    def generateGraph(self, data_x=x_table, data_y=y_table, axis_names=axisNames, x_lim = xlim, y_lim = ylim, graph_title=graphTitle, line_styles=linestyle, colors = colors, legend=labels, legend_args = '', legend_position = '', filename=outputFilename, dpi=dpi, plot_size = plotSize , grid = showGrid, save=saveFile, show=showFigure, tight_layout=True, log_scale = logscale):
         '''
         Draw a graph based on provided data.
         Arguments:
@@ -217,9 +217,16 @@ class grapher(object):
                         plt.plot(xd, yd, label = legend[data_set_index], linestyle=line_styles[data_set_index], color=colors[data_set_index])
         if(len(legend)>0):
             if(legend_args==''):
-                plt.legend()
+                if(legend_position==''):
+                    plt.legend()
+                else:
+                    plt.legend(loc=legend_position)
             else:
-                plt.legend(legend_args)
+                if(legend_position==''):
+                    plt.legend(legend_args)
+                else:
+                    plt.legend(legend_args, loc=legend_position)
+
         plt.xlabel(axis_names[0])
         plt.ylabel(axis_names[1])
         plt.title(graph_title)
