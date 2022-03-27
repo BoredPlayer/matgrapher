@@ -445,7 +445,7 @@ class grapher(object):
 
         if(len(self.contour_plots)>0):
             for i in range(len(self.contour_plots)):
-                cp = plt.contourf(self.contour_plots[i][0], self.contour_plots[i][1], self.contour_plots[i][2])
+                cp = plt.contourf(self.contour_plots[i][0], self.contour_plots[i][1], self.contour_plots[i][2], cmap='coolwarm')
                 #plt.clabel(cp, inline=True)
 
         plt.xlabel(axis_names[0])
