@@ -131,3 +131,5 @@ dmypy.json
 # Visual Studio files
 .vs/
 instrukcje_kompilacji.txt
+
+matgrapher/tester.py

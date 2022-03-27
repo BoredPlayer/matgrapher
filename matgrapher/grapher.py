@@ -14,26 +14,24 @@ class grapher(object):
     5) remove loaded data       "gr.destroyGraphTable()"
     """
 
-    x_table = []
-    y_table = []
-    labels = []
-    xlim = []
-    ylim = []
-    linestyle = []
-    colors = []
-    show_label = []
-    graphTitle = "Graph"
-    axisNames = ["X Values", "Y Values"]
-    outputFilename = "output/file.png"
-    dpi = 300
-    plotSize = [15*1.5/2.54, 15*1.5/2.54]
-    showGrid = True
-    saveFile = True
-    showFigure = False
-    logscale = 'none'
-
     def __init__(self):
-        pass
+        self.x_table = []
+        self.y_table = []
+        self.labels = []
+        self.xlim = []
+        self.ylim = []
+        self.linestyle = []
+        self.colors = []
+        self.show_label = []
+        self.graphTitle = "Graph"
+        self.axisNames = ["X Values", "Y Values"]
+        self.outputFilename = "output/file.png"
+        self.dpi = 300
+        self.plotSize = [15*1.5/2.54, 15*1.5/2.54]
+        self.showGrid = True
+        self.saveFile = True
+        self.showFigure = False
+        self.logscale = 'none'
 
     def destroyGraphTable(self):
         '''
@@ -161,7 +159,7 @@ class grapher(object):
     def setLogscaleMethod(self, logscale_method):
         self.logscale = logscale_method
 
-    def generateGraph(self, data_x=x_table, data_y=y_table, axis_names=axisNames, x_lim = xlim, y_lim = ylim, graph_title=graphTitle, line_styles=linestyle, colors = colors, legend=labels, legend_args = '', legend_position = '', filename=outputFilename, dpi=dpi, plot_size = plotSize , grid = showGrid, save=saveFile, show=showFigure, tight_layout=True, log_scale = logscale):
+    def generateGraph(self, data_x=None, data_y=None, axis_names=None, x_lim = None, y_lim = None, graph_title=None, line_styles=None, colors = None, legend=None, legend_args = '', legend_position = '', filename=None, dpi=None, plot_size = None , grid = None, save=None, show=None, tight_layout=True, log_scale = None):
         '''
         Draw a graph based on provided data.
         Arguments:
@@ -182,6 +180,40 @@ class grapher(object):
         -> save (boolean) - flag for saving drawn graph
         -> show (boolean) - flag for showing drawn graph
         '''
+        #initializing graph arguments
+        if(data_x == None):
+            data_x = self.x_table
+        if(data_y == None):
+            data_y = self.y_table
+        if(axis_names == None):
+            axis_names = self.axisNames
+        if(x_lim == None):
+            x_lim = self.xlim
+        if(y_lim == None):
+            y_lim = self.ylim
+        if(graph_title == None):
+            graph_title = self.graphTitle
+        if(line_styles == None):
+            line_styles = self.linestyle
+        if(colors == None):
+            colors = self.colors
+        if(legend == None):
+            legend = self.labels
+        if(filename == None):
+            filename = self.outputFilename
+        if(dpi == None):
+            dpi = self.dpi
+        if(plot_size == None):
+            plot_size = self.plotSize
+        if(grid == None):
+            grid = self.showGrid
+        if(save == None):
+            save = self.saveFile
+        if(show == None):
+            show = self.showFigure
+        if(log_scale == None):
+            log_scale = self.logscale
+
         lx = len(data_x)
         ly = len(data_y)
         if(lx!=ly):
