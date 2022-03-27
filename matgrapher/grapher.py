@@ -108,7 +108,6 @@ class grapher(object):
         size_flag = False
         command_line = None #a command line at the end of arguments
         last_alpha = 0.0
-        print(type(point[0]))
         if(len(self.point_colors[1])>0):
             last_alpha = self.point_colors[1][-1]
         if(not isinstance(point[0], list) and not isinstance(point[0], np.ndarray)):
@@ -447,7 +446,7 @@ class grapher(object):
         if(len(self.contour_plots)>0):
             for i in range(len(self.contour_plots)):
                 cp = plt.contour(self.contour_plots[i][0], self.contour_plots[i][1], self.contour_plots[i][2])
-                plt.clabel(cp, inline=True)
+                #plt.clabel(cp, inline=True)
 
         plt.xlabel(axis_names[0])
         plt.ylabel(axis_names[1])
