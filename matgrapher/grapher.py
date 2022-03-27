@@ -18,6 +18,7 @@ class grapher(object):
     def __init__(self):
         self.x_table = []
         self.y_table = []
+        self.contour_plots = []
         self.point_table = [[], []]# x, y
         self.point_colors = [[], []]# color (in hex or matplotlib), alpha
         self.point_sizes = []
@@ -88,6 +89,12 @@ class grapher(object):
             for i in range(int(len(args)/2)):
                 self.x_table.append(args[2*i])
                 self.y_table.append(args[2*i+1])
+                
+    def createContourPlot(self, fn, xlist, ylist):
+        X, Y = np.meshgrid(xlist, ylist)
+        Z = fn(X, Y)
+        contour = [X, Y, Z]
+        self.contour_plots.append(contour)
     
     def loadPoints(self, point, *args):
         '''
@@ -436,6 +443,11 @@ class grapher(object):
         if(len(self.text_table)>0):
             for i in range(len(self.text_table[0])):
                 plt.text(self.text_table[1][i][0], self.text_table[1][i][1], self.text_table[0][i])
+
+        if(len(self.contour_plots)>0):
+            for i in range(len(self.contour_plots)):
+                cp = plt.contour(self.contour_plots[i][0], self.contour_plots[i][1], self.contour_plots[i][2])
+                plt.clabel(cp, inline=True)
 
         plt.xlabel(axis_names[0])
         plt.ylabel(axis_names[1])
