@@ -1,5 +1,6 @@
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 import warnings
 
 class grapher(object):
@@ -17,6 +18,11 @@ class grapher(object):
     def __init__(self):
         self.x_table = []
         self.y_table = []
+        self.point_table = [[], []]# x, y
+        self.point_colors = [[], []]# color (in hex or matplotlib), alpha
+        self.point_sizes = []
+        self.point_alpha_change = []
+        self.text_table = [[], []]
         self.labels = []
         self.xlim = []
         self.ylim = []
@@ -82,6 +88,161 @@ class grapher(object):
             for i in range(int(len(args)/2)):
                 self.x_table.append(args[2*i])
                 self.y_table.append(args[2*i+1])
+    
+    def loadPoints(self, point, *args):
+        '''
+        Load points to internal table.
+        If you wish to enable autocoloring of points, add "autocolor:[color of the point set],[opacity level]" string at the end of arguments.
+        If opacity level is not provided, it will be assumed as 1.0.
+        Arguments:
+        -> point ([float, float]) - list containing point coordinates.
+        '''
+        autocolor_flag = False
+        size_flag = False
+        command_line = None #a command line at the end of arguments
+        last_alpha = 0.0
+        print(type(point[0]))
+        if(len(self.point_colors[1])>0):
+            last_alpha = self.point_colors[1][-1]
+        if(not isinstance(point[0], list) and not isinstance(point[0], np.ndarray)):
+            self.point_table[0].append(point[0])
+            self.point_table[1].append(point[1])
+        else:
+            if(len(point[0])!=len(point[1])):
+                warnings.warn("Warning! Point data columns not equal in length! Not all points may be included.")
+            for i in range(min([len(point[0]), len(point[1])])):
+                self.point_table[0].append(point[0][i])
+                self.point_table[1].append(point[1][i])
+        if(len(args)>0):
+            #check for command line at the end of arguments
+            if(type(args[-1])==str):
+                command_line = args[-1].split(";")
+            #check for autocolor at the end of args
+            for cmd in command_line:
+                #if 'size' option is enabled
+                if('size' in cmd):
+                    size = cmd.split(":")[-1]
+                    try:
+                        size = float(size)
+                    except:
+                        size = 20.0# autosizing, if user fails to provide correct size
+                    if(isinstance(point[0], list) or isinstance(point[0], np.ndarray)):
+                        for i in range(min([len(point[0]), len(point[1])])):
+                            self.point_sizes.append(size)
+                    else:
+                        self.point_sizes.append(size)
+                    size_flag = True
+                #if 'autocolor' option is enabled
+                if('autocolor' in cmd):
+                    color = cmd.split(":")[-1]#remove 'autocolor' from the argument
+                    # fixing autocolor string
+                    if(color == '' or color == 'autocolor'):# if user forgot to add color after autocolor
+                        color = '#4e4e4e,1.0'
+                    elif('autocolor' in color):#if 'autcolor' could not be removed (user forgot to add ':')
+                        color = color.split("autocolor")[-1]# remove 'autocolor' forcefully
+                    else:
+                        # checking if user stated opacity correctly
+                        try:
+                            float(color.split(',')[-1])
+                        except:
+                            color = color.split(',')[0]+',1.0'
+                    autocolor_flag = True
+                    #colouring if the basic argument were list
+                    if(isinstance(point[0], list) or isinstance(point[0], np.ndarray)):
+                        for i in range(min([len(point[0]), len(point[1])])):
+                            self.point_colors[0].append(color.split(',')[0])
+                            self.point_colors[1].append(float(color.split(',')[1]))
+                            if(last_alpha!=self.point_colors[1][-1]):
+                                self.point_alpha_change.append(len(self.point_colors[1])-1)
+                                last_alpha = self.point_colors[1][-1]
+                    else:
+                        self.point_colors[0].append(color.split(',')[0])
+                        self.point_colors[1].append(float(color.split(',')[1]))
+                        if(last_alpha!=self.point_colors[1][-1]):
+                            self.point_alpha_change.append(len(self.point_colors[1])-1)
+                            last_alpha = self.point_colors[1][-1]
+            if(size_flag == False):
+                if(isinstance(point[0], list) or isinstance(point[0], np.ndarray)):
+                    for i in range(min([len(point[0]), len(point[1])])):
+                        self.point_sizes.append(20.0)
+                else:
+                    self.point_sizes.append(20.0)
+            #add additional points defined in the arguments
+            for i in range(len(args)):
+                if(autocolor_flag == True):
+                    if(i == len(args)-1):
+                        break
+                    self.point_colors[0].append(color.split(',')[0])
+                    self.point_colors[1].append(float(color.split(',')[1]))
+                if(size_flag==True):
+                    self.point_sizes.append(size)
+                if(size_flag==False):
+                    self.point_sizes.append(20.0)
+                self.point_table[0].append(args[i][0])
+                self.point_table[1].append(args[i][1])
+    
+    def changePointColor(self, color, point_index, end_point_index = None):
+        '''
+        Change color of a point or set of points in internal tables. If the point index is uknown, provide its position in form of a list.
+        Arguments:
+        -> color (string) - color of the point,
+        -> point_index (int or [float, float]) - index number or position of the point,
+        -> end_point_index (int or [float, float]) - index number or position of the last point of the set.
+        '''
+        if(isinstance(point_index, list)):
+            pos = [var for var, val in enumerate(zip(self.point_table[0], self.point_table[1])) if val[0]==point_index[0] and val[1]==point_index[1]]
+            for p in pos:
+                self.point_colors[p] = color
+            if(end_point_index != None):
+                if(isinstance(end_point_index, list)):
+                    end_pos = [var for var, val in enumerate(zip(self.point_table[0], self.point_table[1])) if val[0]==end_point_index[0] and val[1]==end_point_index[1]]
+                    for i in range(min(pos), max(end_pos)):
+                        self.point_colors[i] = color
+                else:
+                    for i in range(min(pos), end_point_index):
+                        self.point_colors[i] = color
+        else:
+            self.point_colors[point_index] = color
+            if(end_point_index != None):
+                if(isinstance(end_point_index, list)):
+                    end_pos = [var for var, val in enumerate(zip(self.point_table[0], self.point_table[1])) if val[0]==end_point_index[0] and val[1]==end_point_index[1]]
+                    for i in range(point_index, max(end_pos)):
+                        self.point_colors[i] = color
+                else:
+                    for i in range(point_index, end_point_index):
+                        self.point_colors[i] = color
+
+    def setPointColor(self, color, alpha = 1.0):
+        '''
+        Set color and transparency of a point.
+        Arguments:
+        -> color (string) - color of the point,
+        -> alpha (float) - level of point transparency (between 0.0 and 1.0).
+        '''
+        self.point_colors[0].append(color)
+        self.point_colors[1].append(alpha)
+
+    def loadText(self, text, position, *args):
+        '''
+        Load positioned text into internal table. Please provide arguments in pairs of text1, position1, text2, position2, ...
+        Arguments:
+        -> text (string) - string to be displayed
+        -> point ([float, float]) - list containing text position
+        '''
+        if(len(args)%2==1):
+            warnings.warn(f"Warning! Data pairing (text, position) not complete. Expected even ammount of arguments, got odd. Last point will be set to [0.0, 0.0]")
+        self.text_table[0].append(text)
+        self.text_table[1].append(position)
+        if(len(args)>0):
+            for i in range(int(len(args)/2)):
+                if(not isinstance(args[2*i+1], list)):
+                    warnings.warn("Warning! Wrong data type provided! Expected position as list, got "+str(type(args[2*i+1]))+". Aborting loading text.")
+                    return None
+                self.text_table[0].append(args[2*i])
+                self.text_table[1].append(args[2*i+1])
+            if(i*2<len(args)-1 and i!=0):
+                self.text_table[0].append(args[-1])
+                self.text_table[1].append([0.0, 0.0])
                 
     def hideLabel(self, label_index=False, label=''):
         '''
@@ -258,6 +419,23 @@ class grapher(object):
                     plt.legend(legend_args)
                 else:
                     plt.legend(legend_args, loc=legend_position)
+        
+        if(len(self.point_table[0])>0):
+            if(len(self.point_colors[0])>0):
+                if(len(self.point_sizes)>0):
+                    for i in range(len(self.point_alpha_change)-1):
+                        plt.scatter(self.point_table[0][self.point_alpha_change[i]:self.point_alpha_change[i+1]], self.point_table[1][self.point_alpha_change[i]:self.point_alpha_change[i+1]], c=self.point_colors[0][self.point_alpha_change[i]:self.point_alpha_change[i+1]], alpha = self.point_colors[1][self.point_alpha_change[i]], s=self.point_sizes[self.point_alpha_change[i]:self.point_alpha_change[i+1]])
+                    plt.scatter(self.point_table[0][self.point_alpha_change[-1]:], self.point_table[1][self.point_alpha_change[-1]:], c=self.point_colors[0][self.point_alpha_change[-1]:], alpha = self.point_colors[1][self.point_alpha_change[-1]], s=self.point_sizes[self.point_alpha_change[-1]:])
+                else:
+                    for i in range(len(self.point_alpha_change)-1):
+                        plt.scatter(self.point_table[0][self.point_alpha_change[i]:self.point_alpha_change[i+1]], self.point_table[1][self.point_alpha_change[i]:self.point_alpha_change[i+1]], c=self.point_colors[0][self.point_alpha_change[i]:self.point_alpha_change[i+1]], alpha = self.point_colors[1][self.point_alpha_change[i]])
+                    plt.scatter(self.point_table[0][self.point_alpha_change[-1]:], self.point_table[1][self.point_alpha_change[-1]:], c=self.point_colors[0][self.point_alpha_change[-1]:], alpha = self.point_colors[1][self.point_alpha_change[-1]])
+            else:
+                plt.scatter(self.point_table[0], self.point_table[1])
+
+        if(len(self.text_table)>0):
+            for i in range(len(self.text_table[0])):
+                plt.text(self.text_table[1][i][0], self.text_table[1][i][1], self.text_table[0][i])
 
         plt.xlabel(axis_names[0])
         plt.ylabel(axis_names[1])
