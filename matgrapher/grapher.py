@@ -54,6 +54,21 @@ class grapher(object):
             del self.linestyle[0]
         for i in range(len(self.colors)):
             del self.colors[0]
+        for i in range(len(self.point_table[0])):
+            del self.point_table[0][0]
+            del self.point_table[1][0]
+        for i in range(len(self.point_colors[0])):
+            del self.point_colors[0][0]
+            del self.point_colors[1][0]
+        for i in range(len(self.point_sizes)):
+            del self.point_sizes[0]
+        for i in range(len(self.point_alpha_change)):
+            del self.point_alpha_change[0]
+        for i in range(len(self.contour_plots)):
+            del self.contour_plots[0]
+        for i in range(len(self.text_table[0])):
+            del self.text_table[0][0]
+            del self.text_table[1][0]
         return None
 
     def loadLabels(self, label, *args):
