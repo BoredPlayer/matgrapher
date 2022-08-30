@@ -47,20 +47,38 @@ For easier data visualisation, it can be stored in grapher's local arrays using 
 gr.loadData(x_data[0], y_data[0], x_data[1], y_data[1], x_data[2], y_data[2]) # x_data and y_data are 2-dimensional arrays containing data to be drawn
 ```
 
+The `grapher.loadData()` method automatically assigns line widths. In order to change it, use:
+```python
+gr.changeLineWidth(width, index=dataindex)
+```
+The default value for dataindex is `None`. If it is unchanged, the method will only edit line width of the newest data set.
+
+In order to change the default width of lines, use:
+```python
+gr.changeDefaultWidth(width)
+```
+
 Generating the graph may be performed using `generateGraph()` method. Providing that all prior steps were performed, it does not require any additional arguments. However it will generate a graph titled *Graph*, x and y labels will be set as *X Values* and *Y Values* and will be saved in *output* folder as *file.png*. In order to change the listed parameters, user can provide arguments such as:
 1) data_x ([float, ...]) - data shown as argument X of the drawn chart,
 2) data_y ([float, ...]) - data shown as argument Y of the drawn chart,
 3) axis_names ([string, string]) - table of axis names ([0] - X axis, [1] - Y axis]),
-4) graph_title (string) - a title for drawn graph,
-5) legend ([string, ...]) - tabe of labels used in legend,
-6) filename (string) - name for the output file,
-7) dpi (int) - Dots Per Inch (resolution) of the exported graph,
-8) plot_size ([float, float]) - size of the exported graph (in inches - conversion ratio cm->inch is 1/2.54),
-9) grid (boolean) - argument for generating grid in the drawn graph
-10) save (boolean) - flag for saving drawn graph
-11) show (boolean) - flag for showing drawn graph
-12) tight_layout (boolean) - flag for tight layout of the exported graph (removes white margins)
-13) log_scale (string) - set axis with log scale (avaliable options: "x", "y", "xy")
+4) x_lim ([float, float]) - limits of x_axis (if an empty array is passed (default), no limits are imposed)
+5) y_lim ([float, float]) - limits of y_axis (if an empty array is passed (default), no limits are imposed)
+6) graph_title (string) - a title for drawn graph,
+7) line_styles ([string, ...]) - line styles as matplotlib argument
+8) line_widths ([float, ...]) - widths of the drawn lines
+9) colors ([string, ...]) - line colors as matplotlib argument
+10) legend ([string, ...]) - tabe of labels used in legend,
+11) legend_args (string) - arguments for plt.legend function
+12) legend_position (string) - argument for legend location as matplotlib argument
+13) filename (string) - name for the output file,
+14) dpi (int) - Dots Per Inch (resolution) of the exported graph,
+15) plot_size ([float, float]) - size of the exported graph (in inches - conversion ratio cm->inch is 1/2.54),
+16) grid (boolean) - argument for generating grid in the drawn graph
+17) save (boolean) - flag for saving drawn graph
+18) show (boolean) - flag for showing drawn graph
+19) tight_layout (boolean) - flag for enabling/disabling tight layout of the graph (default: True)
+20) log_scale (string) - settings for log scale at chosen axis
 
 After drawing the plot, figure created will be closed as per matplotlib documentation's recomendation.
 

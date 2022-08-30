@@ -30,6 +30,8 @@ class grapher(object):
         self.linestyle = []
         self.colors = []
         self.show_label = []
+        self.line_widths = []
+        self.default_width = 1.3
         self.graphTitle = "Graph"
         self.axisNames = ["X Values", "Y Values"]
         self.outputFilename = "output/file.png"
@@ -104,6 +106,8 @@ class grapher(object):
             for i in range(int(len(args)/2)):
                 self.x_table.append(args[2*i])
                 self.y_table.append(args[2*i+1])
+
+        self.line_widths.append(self.default_width)
                 
     def createContourPlot(self, fn, xlist, ylist):
         X, Y = np.meshgrid(xlist, ylist)
@@ -285,6 +289,49 @@ class grapher(object):
                     self.show_label[label_index] = False
                 except:
                     warning.warn(f"Warning: Could not hide label {label_index}. Size of label array is {len(self.show_label)}")
+
+    def changeDefaultWidth(self, width):
+        if(isintance(width, float) or isinstance(width, int)):
+            self.default_width = width
+        else:
+            warnings.warn(f"Warning: Expected width type of float or int not ({type(width)})")
+
+    def changeLineWidth(self, width, index=None):
+        if(not isinstance(width, float) and not isinstance(width, int)):
+            warnings.warn(f"Warning: Expected float or int value, not {type(width)} as line width.\nLine width will not be changed.")
+            return
+        if(isinstance(index, int)):
+            if(index>len(self.line_widths)):
+                warnings.warn(f"Warning: Requesting higher index ({index}) than length of the array ({len(self.line_widths)}).\nFalling back to max available index")
+                index = len(self.line_widths)-1
+            try:
+                self.line_widths[index] = width
+            except:
+                warnings.warn(f"Warning: Could not change selected line width (@ line: {index})")
+        if(index==None):
+            try:
+                self.line_widths[-1] = width
+            except:
+                warnings.warn(f"Warning: Could not change selected line width.\tPerhaps there is no data in arrays?")
+        if(isinstance(index, list)):
+            if(len(index)>len(line_widths)):
+                warnings.warn(f"Warning: Index array longer than data array!\nExpected at most {len(self.line_widths)} widths, got {len(index)}.\nUpdating only available data.")
+            try:
+                for i in range(min(len(index), len(self.len_widths))):
+                    self.line_widths[index[i]] = width
+            except:
+                warnings.warn("Warning: could not edit line width.")
+        if(isinstance(index, np.ndarray)):
+            if(index.ndim>1):
+                warnigns.warn(f"Warning: Expected 1D numpy array, got {index.ndim}D array.")
+                return
+            if(len(index)>len(self.line_widths)):
+                warnings.warn(f"Warning: Index array longer than data array!\nExpected at most {len(self.line_widths)} widths, got {len(index)}.\nUpdating only available data.")
+            try:
+                for i in range(min(len(index), len(self.len_widths))):
+                    self.line_widths[index[i]] = width
+            except:
+                warnings.warn("Warning: could not edit line width.")
             
     
     def loadLineStyles(self, linestyle, *args):
@@ -341,7 +388,27 @@ class grapher(object):
     def setLogscaleMethod(self, logscale_method):
         self.logscale = logscale_method
 
-    def generateGraph(self, data_x=None, data_y=None, axis_names=None, x_lim = None, y_lim = None, graph_title=None, line_styles=None, colors = None, legend=None, legend_args = '', legend_position = '', filename=None, dpi=None, plot_size = None , grid = None, save=None, show=None, tight_layout=True, log_scale = None):
+    def generateGraph(self,
+                        data_x=None,
+                        data_y=None,
+                        axis_names=None,
+                        x_lim = None,
+                        y_lim = None,
+                        graph_title=None,
+                        line_styles=None,
+                        line_widths=None,
+                        colors = None,
+                        legend=None,
+                        legend_args = '',
+                        legend_position = '',
+                        filename=None,
+                        dpi=None,
+                        plot_size = None,
+                        grid = None,
+                        save=None,
+                        show=None,
+                        tight_layout=True,
+                        log_scale = None ):
         '''
         Draw a graph based on provided data.
         Arguments:
@@ -352,15 +419,19 @@ class grapher(object):
         -> y_lim ([float, float]) - limits of y_axis (if an empty array is passed (default), no limits are imposed)
         -> graph_title (string) - a title for drawn graph,
         -> line_styles ([string, ...]) - line styles as matplotlib argument
+        -> line_widths ([float, ...]) - widths of the drawn lines
         -> colors ([string, ...]) - line colors as matplotlib argument
         -> legend ([string, ...]) - tabe of labels used in legend,
         -> legend_args (string) - arguments for plt.legend function
+        -> legend_position (string) - argument for legend location as matplotlib argument
         -> filename (string) - name for the output file,
         -> dpi (int) - Dots Per Inch (resolution) of the exported graph,
         -> plot_size ([float, float]) - size of the exported graph (in inches - conversion ratio cm->inch is 1/2.54),
         -> grid (boolean) - argument for generating grid in the drawn graph
         -> save (boolean) - flag for saving drawn graph
         -> show (boolean) - flag for showing drawn graph
+        -> tight_layout (boolean) - flag for enabling/disabling tight layout of the graph (default: True)
+        -> log_scale (string) - settings for log scale at chosen axis
         '''
         #initializing graph arguments
         if(data_x == None):
@@ -377,6 +448,8 @@ class grapher(object):
             graph_title = self.graphTitle
         if(line_styles == None):
             line_styles = self.linestyle
+        if(line_widths == None):
+            line_widths = self.line_widths
         if(colors == None):
             colors = self.colors
         if(legend == None):
@@ -410,25 +483,25 @@ class grapher(object):
             if(data_set_index>=len(legend) or self.show_label[data_set_index]==False):
                 if(data_set_index>=len(line_styles)):
                     if(data_set_index>=len(colors)):
-                        plt.plot(xd, yd)
+                        plt.plot(xd, yd, linewidth=line_widths[data_set_index])
                     else:
-                        plt.plot(xd, yd, colors[data_set_index])
+                        plt.plot(xd, yd, colors[data_set_index], linewidth=line_widths[data_set_index])
                 else:
                     if(data_set_index>=len(colors)):
-                        plt.plot(xd, yd, linestyle=line_styles[data_set_index])
+                        plt.plot(xd, yd, linestyle=line_styles[data_set_index], linewidth=line_widths[data_set_index])
                     else:
-                        plt.plot(xd, yd, linestyle=line_styles[data_set_index], color=colors[data_set_index])
+                        plt.plot(xd, yd, linestyle=line_styles[data_set_index], color=colors[data_set_index], linewidth=line_widths[data_set_index])
             else:
                 if(data_set_index>=len(line_styles)):
                     if(data_set_index>=len(colors)):
-                        plt.plot(xd, yd, label = legend[data_set_index])
+                        plt.plot(xd, yd, label = legend[data_set_index], linewidth=line_widths[data_set_index])
                     else:
-                        plt.plot(xd, yd, label = legend[data_set_index], color=colors[data_set_index])
+                        plt.plot(xd, yd, label = legend[data_set_index], color=colors[data_set_index], linewidth=line_widths[data_set_index])
                 else:
                     if(data_set_index>=len(colors)):
-                        plt.plot(xd, yd, label = legend[data_set_index], linestyle=line_styles[data_set_index])
+                        plt.plot(xd, yd, label = legend[data_set_index], linestyle=line_styles[data_set_index], linewidth=line_widths[data_set_index])
                     else:
-                        plt.plot(xd, yd, label = legend[data_set_index], linestyle=line_styles[data_set_index], color=colors[data_set_index])
+                        plt.plot(xd, yd, label = legend[data_set_index], linestyle=line_styles[data_set_index], color=colors[data_set_index], linewidth=line_widths[data_set_index])
         if(len(legend)>0):
             if(legend_args==''):
                 if(legend_position==''):
