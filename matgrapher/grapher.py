@@ -31,7 +31,9 @@ class grapher(object):
         self.colors = []
         self.show_label = []
         self.line_widths = []
+        self.line_alphas = []
         self.default_width = 1.3
+        self.default_alpha = 1.0
         self.graphTitle = "Graph"
         self.axisNames = ["X Values", "Y Values"]
         self.outputFilename = "output/file.png"
@@ -71,6 +73,8 @@ class grapher(object):
         for i in range(len(self.text_table[0])):
             del self.text_table[0][0]
             del self.text_table[1][0]
+        for i in range(len(self.line_widths)):
+            del self.line_widths[0]
         return None
 
     def loadLabels(self, label, *args):
@@ -108,6 +112,7 @@ class grapher(object):
                 self.y_table.append(args[2*i+1])
 
         self.line_widths.append(self.default_width)
+        self.line_alphas.append(self.default_alpha)
                 
     def createContourPlot(self, fn, xlist, ylist):
         X, Y = np.meshgrid(xlist, ylist)
@@ -290,6 +295,43 @@ class grapher(object):
                 except:
                     warning.warn(f"Warning: Could not hide label {label_index}. Size of label array is {len(self.show_label)}")
 
+    def changeLineAlpha(self, alpha, index=None):
+        if(not isinstance(alpha, float) and not isinstance(alpha, int)):
+            warnings.warn(f"Warning: Expected float or int value, not {type(alpha)} as line opacity.\nLine opacity will not be changed.")
+            return
+        if(isinstance(index, int)):
+            if(index>len(self.line_alphas)):
+                warnings.warn(f"Warning: Requesting higher index ({index}) than length of the array ({len(self.line_alphas)}).\nFalling back to max available index")
+                index = len(self.line_alphas)-1
+            try:
+                self.line_alphas[index] = alpha
+            except:
+                warnings.warn(f"Warning: Could not change selected line opacity (@ line: {index})")
+        if(index==None):
+            try:
+                self.line_alphas[-1] = alpha
+            except:
+                warnings.warn(f"Warning: Could not change selected line opacity.\tPerhaps there is no data in arrays?")
+        if(isinstance(index, list)):
+            if(len(index)>len(line_alphas)):
+                warnings.warn(f"Warning: Index array longer than data array!\nExpected at most {len(self.line_alphas)} opacity, got {len(index)}.\nUpdating only available data.")
+            try:
+                for i in range(min(len(index), len(self.line_alphas))):
+                    self.line_alphas[index[i]] = alpha
+            except:
+                warnings.warn("Warning: could not edit line opacity.")
+        if(isinstance(index, np.ndarray)):
+            if(index.ndim>1):
+                warnigns.warn(f"Warning: Expected 1D numpy array, got {index.ndim}D array.")
+                return
+            if(len(index)>len(self.line_alphas)):
+                warnings.warn(f"Warning: Index array longer than data array!\nExpected at most {len(self.line_alphas)} indexes, got {len(index)}.\nUpdating only available data.")
+            try:
+                for i in range(min(len(index), len(self.line_alphas))):
+                    self.line_alphas[index[i]] = alpha
+            except:
+                warnings.warn("Warning: could not edit line width.")
+
     def changeDefaultWidth(self, width):
         if(isintance(width, float) or isinstance(width, int)):
             self.default_width = width
@@ -317,7 +359,7 @@ class grapher(object):
             if(len(index)>len(line_widths)):
                 warnings.warn(f"Warning: Index array longer than data array!\nExpected at most {len(self.line_widths)} widths, got {len(index)}.\nUpdating only available data.")
             try:
-                for i in range(min(len(index), len(self.len_widths))):
+                for i in range(min(len(index), len(self.line_widths))):
                     self.line_widths[index[i]] = width
             except:
                 warnings.warn("Warning: could not edit line width.")
@@ -328,7 +370,7 @@ class grapher(object):
             if(len(index)>len(self.line_widths)):
                 warnings.warn(f"Warning: Index array longer than data array!\nExpected at most {len(self.line_widths)} widths, got {len(index)}.\nUpdating only available data.")
             try:
-                for i in range(min(len(index), len(self.len_widths))):
+                for i in range(min(len(index), len(self.line_widths))):
                     self.line_widths[index[i]] = width
             except:
                 warnings.warn("Warning: could not edit line width.")
@@ -397,6 +439,7 @@ class grapher(object):
                         graph_title=None,
                         line_styles=None,
                         line_widths=None,
+                        line_alphas=None,
                         colors = None,
                         legend=None,
                         legend_args = '',
@@ -450,6 +493,8 @@ class grapher(object):
             line_styles = self.linestyle
         if(line_widths == None):
             line_widths = self.line_widths
+        if(line_alphas==None):
+            line_alphas = self.line_alphas
         if(colors == None):
             colors = self.colors
         if(legend == None):
@@ -483,25 +528,25 @@ class grapher(object):
             if(data_set_index>=len(legend) or self.show_label[data_set_index]==False):
                 if(data_set_index>=len(line_styles)):
                     if(data_set_index>=len(colors)):
-                        plt.plot(xd, yd, linewidth=line_widths[data_set_index])
+                        plt.plot(xd, yd, linewidth=line_widths[data_set_index], alpha=line_alphas[data_set_index])
                     else:
-                        plt.plot(xd, yd, colors[data_set_index], linewidth=line_widths[data_set_index])
+                        plt.plot(xd, yd, colors[data_set_index], linewidth=line_widths[data_set_index], alpha=line_alphas[data_set_index])
                 else:
                     if(data_set_index>=len(colors)):
-                        plt.plot(xd, yd, linestyle=line_styles[data_set_index], linewidth=line_widths[data_set_index])
+                        plt.plot(xd, yd, linestyle=line_styles[data_set_index], linewidth=line_widths[data_set_index], alpha=line_alphas[data_set_index])
                     else:
-                        plt.plot(xd, yd, linestyle=line_styles[data_set_index], color=colors[data_set_index], linewidth=line_widths[data_set_index])
+                        plt.plot(xd, yd, linestyle=line_styles[data_set_index], color=colors[data_set_index], linewidth=line_widths[data_set_index], alpha=line_alphas[data_set_index])
             else:
                 if(data_set_index>=len(line_styles)):
                     if(data_set_index>=len(colors)):
-                        plt.plot(xd, yd, label = legend[data_set_index], linewidth=line_widths[data_set_index])
+                        plt.plot(xd, yd, label = legend[data_set_index], linewidth=line_widths[data_set_index], alpha=line_alphas[data_set_index])
                     else:
-                        plt.plot(xd, yd, label = legend[data_set_index], color=colors[data_set_index], linewidth=line_widths[data_set_index])
+                        plt.plot(xd, yd, label = legend[data_set_index], color=colors[data_set_index], linewidth=line_widths[data_set_index], alpha=line_alphas[data_set_index])
                 else:
                     if(data_set_index>=len(colors)):
-                        plt.plot(xd, yd, label = legend[data_set_index], linestyle=line_styles[data_set_index], linewidth=line_widths[data_set_index])
+                        plt.plot(xd, yd, label = legend[data_set_index], linestyle=line_styles[data_set_index], linewidth=line_widths[data_set_index], alpha=line_alphas[data_set_index])
                     else:
-                        plt.plot(xd, yd, label = legend[data_set_index], linestyle=line_styles[data_set_index], color=colors[data_set_index], linewidth=line_widths[data_set_index])
+                        plt.plot(xd, yd, label = legend[data_set_index], linestyle=line_styles[data_set_index], color=colors[data_set_index], linewidth=line_widths[data_set_index], alpha=line_alphas[data_set_index])
         if(len(legend)>0):
             if(legend_args==''):
                 if(legend_position==''):
