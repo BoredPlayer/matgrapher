@@ -110,9 +110,9 @@ class grapher(object):
             for i in range(int(len(args)/2)):
                 self.x_table.append(args[2*i])
                 self.y_table.append(args[2*i+1])
-
-        self.line_widths.append(self.default_width)
-        self.line_alphas.append(self.default_alpha)
+                
+                self.line_widths.append(self.default_width)
+                self.line_alphas.append(self.default_alpha)
                 
     def createContourPlot(self, fn, xlist, ylist):
         X, Y = np.meshgrid(xlist, ylist)
