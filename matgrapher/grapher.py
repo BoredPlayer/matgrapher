@@ -106,6 +106,8 @@ class grapher(object):
 
         self.x_table.append(x_argument.copy())
         self.y_table.append(y_argument.copy())
+        self.line_widths.append(self.default_width)
+        self.line_alphas.append(self.default_alpha)
         if(len(args)>0):
             for i in range(int(len(args)/2)):
                 self.x_table.append(args[2*i])
