@@ -229,20 +229,20 @@ class grapher(object):
                 if(isinstance(end_point_index, list)):
                     end_pos = [var for var, val in enumerate(zip(self.point_table[0], self.point_table[1])) if val[0]==end_point_index[0] and val[1]==end_point_index[1]]
                     for i in range(min(pos), max(end_pos)):
-                        self.point_colors[i] = color
+                        self.point_colors[0][i] = color
                 else:
                     for i in range(min(pos), end_point_index):
-                        self.point_colors[i] = color
+                        self.point_colors[0][i] = color
         else:
-            self.point_colors[point_index] = color
+            self.point_colors[0][point_index] = color
             if(end_point_index != None):
                 if(isinstance(end_point_index, list)):
                     end_pos = [var for var, val in enumerate(zip(self.point_table[0], self.point_table[1])) if val[0]==end_point_index[0] and val[1]==end_point_index[1]]
                     for i in range(point_index, max(end_pos)):
-                        self.point_colors[i] = color
+                        self.point_colors[0][i] = color
                 else:
                     for i in range(point_index, end_point_index):
-                        self.point_colors[i] = color
+                        self.point_colors[0][i] = color
 
     def setPointColor(self, color, alpha = 1.0):
         '''
@@ -607,3 +607,4 @@ class grapher(object):
         if(show):
             plt.show()
         plt.close()
+
