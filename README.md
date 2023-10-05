@@ -101,7 +101,7 @@ gr.destroyGraphTable()
 ```
 
 # Communication
-A big part of matgrapher library is an implementation of an interface for software not written in python. The `__main__.py` module acts as a server capable of receiving and processing data incoming via UDP packets. A socket used by the module listens for incoming messages in port 50553.
+A big part of matgrapher library is an implementation of an interface for software not written in python. The `__main__.py` module acts as a server capable of receiving and processing data incoming via UDP packets. A socket used by the module listens for incoming messages in port 50553. The module is available for both Windows and Linux.
 
 To easily run the server, use bash command:
 ```bash
@@ -127,7 +127,10 @@ The server recognises the following set of commands:
 * `echo off` - turns debugging info in server console off
 * `set title` - makes server wait for graph title
 * `set axisnames` - makes server wait for axis labels
+* `set xlims` - makes server wait for x axis range (example: '0.5,1.0')
+* `set ylims` - makes server wait for y axis range (example: '0.5,1.0')
 * `set exportmethod` - makes server wait for export method (save, don't show; show, don't save; save and show)
+* `set filename` - makes server wait for output file name
 * `set gridvisibility` - makes server wait for grid visibility flag status
 * `set logscalemethod` - makes server wait for axis log scale method
 * `destroy graph` - invokes grapher.destroyGraph() method

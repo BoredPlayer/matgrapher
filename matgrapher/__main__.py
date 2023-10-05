@@ -100,15 +100,20 @@ def main():
     loadlabels_flag = False
     settitle_flag = False
     setaxisnames_flag = False
+    setxlims_flag = False
+    setylims_flag = False
     setexportmethod_flag = False
+    setfilename_flag = False
     setgridvisibility_flag = False
     setlogscale_flag = False
 
     graphTitle = gr.graphTitle
     axisNames = gr.axisNames
-    exportmethod = 1
+    exportmethod_save = False
+    exportmethod_show = True
     gridvisibility = gr.showGrid    
 
+    print("Margrapher module on.")
     print(f"Waiting for connection @ {UDP_IP_ADDRESS}:{UDP_PORT_NO}\n")
 
     while(True):
@@ -119,14 +124,40 @@ def main():
             gr.setGraphTitle(str(data.decode()))
             graphTitle = data.decode()
             settitle_flag = False
+        if(setfilename_flag == True):
+            gr.outputFilename = str(data.decode())
+            setfilename_flag = False
         if(setaxisnames_flag == True):
             if(not less_info):
                 print("Changing axis names.")
-            gr.setAxisNames(str(data).split(',')[0], str(data).split(',')[1])
+            gr.setAxisNames(str(data).split(',')[0], str(data).split(',')[1][:-1])
             axisNames = data.decode().split(',')[0], str(data).split(',')[1]
             setaxisnames_flag = False
+        if(setxlims_flag == True):
+            if(not less_info):
+                print("Changing X axis range.")
+            gr.xlim = [float(data.decode().split(',')[0]), float(str(data).split(',')[1][:-1])]
+            setxlims_flag = False
+        if(setylims_flag == True):
+            if(not less_info):
+                print("Changing Y axis range.")
+            gr.ylim = [float(data.decode().split(',')[0]), float(str(data).split(',')[1][:-1])]
+            setylims_flag = False
         if(setexportmethod_flag == True):
-            gr.setExportMethod(int(data))
+            exportmethod = data.decode()
+            if(exportmethod=='0'):
+                exportmethod_save = True
+                exportmethod_show = False
+                exportmethod = 0
+                if(not less_info):
+                    print("Saving, not showing")
+            else:
+                exportmethod_save = False
+                exportmethod_show = True
+                exportmethod = 1
+                if(not less_info):
+                    print("Showing, not saving")
+            gr.setExportMethod(exportmethod)
             setexportmethod_flag = False
         if(setgridvisibility_flag == True):
             if(data==b'True' or data==b'true' or data==b'1'):
@@ -162,17 +193,23 @@ def main():
             loadlabels_flag = False
             loadlabels(b'0', lb_buffer, hold=False)
         if(data==b'generate graph'):
-            gr.generateGraph(graph_title=graphTitle, axis_names=axisNames, show=True, save=False)
+            gr.generateGraph(graph_title=graphTitle, axis_names=axisNames, save = exportmethod_save, show = exportmethod_show)
         if(data==b'set title'):
             settitle_flag = True
         if(data==b'set axisnames'):
             setaxisnames_flag = True
+        if(data==b'set xlims'):
+            setxlims_flag = True
+        if(data==b'set ylims'):
+            setylims_flag = True
         if(data==b'set exportmethod'):
             setexportmethod_flag = True
         if(data==b'set gridvisibility'):
             setgridvisibility_flag = True
         if(data==b'set logscalemethod'):
             setlogscale_flag = True
+        if(data==b'set filename'):
+            setfilename_flag = True
         if(data==b'destroy graph'):
             gr.destroyGraphTable()
             dt_buffer = [[], []]
