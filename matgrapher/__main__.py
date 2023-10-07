@@ -133,7 +133,7 @@ def main():
             if(not less_info):
                 print("Changing axis names.")
             gr.setAxisNames(str(data).split(',')[0], str(data).split(',')[1][:-1])
-            axisNames = data.decode().split(',')[0], str(data).split(',')[1]
+            axisNames = data.decode().split(',')[0], str(data).split(',')[1][:-1]
             setaxisnames_flag = False
         if(setxlims_flag == True):
             if(not less_info):
