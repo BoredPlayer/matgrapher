@@ -38,6 +38,8 @@ class matgraphergate
         int setExportMethod(int method);
         int setTitle(std::string title);
         int setFilename(std::string filename);
+        int setPlotSize(double x_size, double y_size);
+        int setDPI(int DPI);
         int setAxisRange(double x_min, double y_min, double x_max, double y_max);
         int loadLabels(std::vector<std::string> labels, int length);
         int loadMulData(std::vector<std::vector<double>> arguments, std::vector<std::vector<double>> values);

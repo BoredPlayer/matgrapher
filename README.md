@@ -18,9 +18,18 @@ In order to work properly, the program needs 2 external libraries:
 Both should be installed automatically while using pip.
 
 ## Installation
-To install the library just type in terminal:
+This library may be easly installed using `pip`.
+
+### Windows
+To install the library just type in command window:
 ```bash
 pip install git+https://github.com/BoredPlayer/matgrapher.git
+```
+
+### Linux
+To install the library just type in terminal:
+```bash
+pip3 install git+https://github.com/BoredPlayer/matgrapher.git
 ```
 
 ## Usage
@@ -101,12 +110,17 @@ gr.destroyGraphTable()
 ```
 
 # Communication
+[Example of drawing graph with C++ is in the end of this section.](#example-of-c-implementation)
+
 A big part of matgrapher library is an implementation of an interface for software not written in python. The `__main__.py` module acts as a server capable of receiving and processing data incoming via UDP packets. A socket used by the module listens for incoming messages in port 50553. The module is available for both Windows and Linux.
 
-To easily run the server, use bash command:
+To easily run the server, use command (Windows):
 ```bash
 python -m matgrapher
 ```
+
+If you use Linux, use `python3 -m matgrapher` command instead.
+
 After a few seconds the server will print welcome message:
 ```
 Waiting for connection @ 127.0.0.1:50553
@@ -115,6 +129,34 @@ This means, that the server listens locally for connection at port 50553.
 
 ## Server commands
 The server recognises the following set of commands:
+
+There are four types of messages accepted by server:
+1) server setup - controls server's overall behaviour to messages
+2) graph setup - controls graph outlook, like size and axes
+3) dataflow setup - begins or ends listening for data
+4) data messages
+
+Usable commands are listed below.
+
+### Server setup
+* `echo on` - turns debugging info in server console on
+* `echo off` - turns debugging info in server console off
+* `destroy graph` - invokes grapher.destroyGraph() method
+* `end listening` - shuts the server down
+
+### Graph setup
+* `set title` - makes server wait for graph title
+* `set axisnames` - makes server wait for axis labels
+* `set xlims` - makes server wait for x axis range (example: '0.5,1.0')
+* `set ylims` - makes server wait for y axis range (example: '0.5,1.0')
+* `set exportmethod` - makes server wait for export method (save, don't show; show, don't save; save and show)
+* `set filename` - makes server wait for output file name
+* `set plotsize` - makes server wait for size of the plot
+* `set DPI` - makes server wait for Dots Per Inch setting
+* `set gridvisibility` - makes server wait for grid visibility flag status
+* `set logscalemethod` - makes server wait for axis log scale method
+
+### Dataflow setup
 * `load data` - puts server into _single-column data receiving mode_
 * `end load data` - ends _single-column data receiving mode_
 * `load dataargs` - puts server into _double-column data receiving mode_
@@ -123,18 +165,9 @@ The server recognises the following set of commands:
 * `end load muldata` - edns _multiple-column data receiving mode_
 * `load labels` - puts server into _labels receiving mode_
 * `end loadlabels` - ends _labels receiving mode_
-* `echo on` - turns debugging info in server console on
-* `echo off` - turns debugging info in server console off
-* `set title` - makes server wait for graph title
-* `set axisnames` - makes server wait for axis labels
-* `set xlims` - makes server wait for x axis range (example: '0.5,1.0')
-* `set ylims` - makes server wait for y axis range (example: '0.5,1.0')
-* `set exportmethod` - makes server wait for export method (save, don't show; show, don't save; save and show)
-* `set filename` - makes server wait for output file name
-* `set gridvisibility` - makes server wait for grid visibility flag status
-* `set logscalemethod` - makes server wait for axis log scale method
-* `destroy graph` - invokes grapher.destroyGraph() method
-* `end listening` - shuts the server down
+
+### Data messages
+There are several types of data message format. All are explained in [Server modes section](#server-modes).
 
 ## Server modes
 Typically, the server operates by waiting for a command, after which it waits for a argument associated with said command. However, there are situations requireing providing more than one line of arguments. For such situations the server can be put into one of four modes at a time:

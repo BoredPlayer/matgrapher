@@ -106,6 +106,8 @@ def main():
     setfilename_flag = False
     setgridvisibility_flag = False
     setlogscale_flag = False
+    setplotsize_flag = False
+    setDPI_flag = False
 
     graphTitle = gr.graphTitle
     axisNames = gr.axisNames
@@ -138,6 +140,9 @@ def main():
                 print("Changing X axis range.")
             gr.xlim = [float(data.decode().split(',')[0]), float(str(data).split(',')[1][:-1])]
             setxlims_flag = False
+        if(setplotsize_flag == True):
+            gr.plotSize = [float(data.decode().split(',')[0]), float(str(data).split(',')[1][:-1])]
+            setplotsize_flag = False
         if(setylims_flag == True):
             if(not less_info):
                 print("Changing Y axis range.")
@@ -168,6 +173,9 @@ def main():
         if(setlogscale_flag == True):
             gr.setLogsaceMethod(str(data))
             setlogscale_flag = False
+        if(setDPI_flag):
+            gr.dpi = int(data.decode())
+            setDPI_flag = False
         if(data==b'echo off'):
             less_info = True
         if(data==b'echo on'):
@@ -202,6 +210,10 @@ def main():
             setxlims_flag = True
         if(data==b'set ylims'):
             setylims_flag = True
+        if(data==b'set plotsize'):
+            setplotsize_flag = True
+        if(data==b'set DPI'):
+            setDPI_flag = True
         if(data==b'set exportmethod'):
             setexportmethod_flag = True
         if(data==b'set gridvisibility'):

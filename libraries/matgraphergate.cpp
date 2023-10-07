@@ -172,6 +172,20 @@ int matgraphergate::setAxisRange(double x_min, double y_min, double x_max, doubl
     return 0;
 }
 
+int matgraphergate::setPlotSize(double x_size, double y_size){
+    std::stringstream sizestring;
+    sizestring << x_size << "," << y_size;
+    this->sendCommand("set plotsize");
+    this->sendCommand(sizestring.str().c_str());
+    return 0;
+}
+
+int matgraphergate::setDPI(int DPI){
+    this->sendCommand("set DPI");
+    this->sendCommand(std::to_string(DPI).c_str());
+    return 0;
+}
+
 std::vector<std::string> matgraphergate::split_line(std::string line, char del){
     std::vector<std::string> output_vec;
     std::string line_buffer = "";
